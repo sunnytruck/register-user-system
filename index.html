@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ユーザー登録システム（研修デモ）</title>
+  <style>
+    :root {
+      --bg: #f2f4f7;
+      --panel: #ffffff;
+      --border: #cfd6de;
+      --text: #1f2a37;
+      --muted: #5b6675;
+      --primary: #2f5ea7;
+      --primary-hover: #274f8b;
+      --danger-bg: #fde8e8;
+      --danger-border: #f5b7b1;
+      --danger-text: #8a1f11;
+      --header-bg: #e8edf5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Yu Gothic UI", "Meiryo", sans-serif;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 18px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    h1, h2 {
+      margin: 0 0 14px;
+      font-size: 20px;
+      color: #17202b;
+      border-left: 5px solid var(--primary);
+      padding-left: 10px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-top: 22px;
+    }
+
+    .note {
+      margin: 0 0 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 10px 14px;
+      align-items: center;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .required {
+      color: #b42318;
+      margin-left: 4px;
+      font-size: 12px;
+    }
+
+    input,
+    select,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 10px;
+      background: #fff;
+    }
+
+    input:focus,
+    select:focus {
+      outline: 2px solid #aac6ef;
+      border-color: #7fa8e0;
+    }
+
+    .actions {
+      grid-column: 2 / 3;
+      margin-top: 6px;
+    }
+
+    button {
+      border: 1px solid #244b82;
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: var(--primary-hover);
+    }
+
+    .error-box {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--danger-border);
+      background: var(--danger-bg);
+      color: var(--danger-text);
+      border-radius: 4px;
+    }
+
+    .error-box ul {
+      margin: 6px 0 0 18px;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 9px 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: var(--header-bg);
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="panel">
+      <h1>ユーザー登録システム</h1>
+      <p class="note">新人研修用デモ：仕様伝達のズレを確認するためのサンプル画面です。</p>
+
+      <!-- バリデーションエラー表示領域 -->
+      <div id="errorBox" class="error-box" aria-live="polite"></div>
+
+      <form id="userForm" novalidate>
+        <div class="form-grid">
+          <label for="name">氏名<span class="required">必須</span></label>
+          <input id="name" name="name" type="text" autocomplete="name" />
+
+          <label for="email">メールアドレス<span class="required">必須</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" />
+
+          <label for="role">権限区分<span class="required">必須</span></label>
+          <select id="role" name="role">
+            <option value="">選択してください</option>
+            <option value="一般">一般</option>
+            <option value="管理者">管理者</option>
+          </select>
+
+          <label for="password">パスワード<span class="required">8文字以上</span></label>
+          <input id="password" name="password" type="password" autocomplete="new-password" />
+
+          <label for="confirmPassword">確認用パスワード<span class="required">一致必須</span></label>
+          <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" />
+
+          <div class="actions">
+            <button type="submit">登録</button>
+          </div>
+        </div>
+      </form>
+
+      <h2>登録済みユーザー一覧</h2>
+      <div class="table-wrap">
+        <table aria-label="登録済みユーザー一覧">
+          <thead>
+            <tr>
+              <th>氏名</th>
+              <th>メールアドレス</th>
+              <th>権限区分</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 研修用に、初期データを2件以上セットする
+    const users = [
+      { name: "田中 太郎", email: "tanaka@example.com", role: "一般" },
+      { name: "山田 花子", email: "yamada@example.com", role: "管理者" }
+    ];
+
+    const form = document.getElementById("userForm");
+    const errorBox = document.getElementById("errorBox");
+    const tableBody = document.getElementById("userTableBody");
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    function renderUsers() {
+      tableBody.innerHTML = "";
+
+      users.forEach((user) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${escapeHtml(user.name)}</td>
+          <td>${escapeHtml(user.email)}</td>
+          <td>${escapeHtml(user.role)}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // 最低限のエスケープ処理（外部ライブラリ不使用）
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function validate(formData) {
+      const errors = [];
+
+      if (!formData.name.trim()) {
+        errors.push("氏名は必須です。");
+      }
+
+      if (!formData.email.trim()) {
+        errors.push("メールアドレスは必須です。");
+      } else if (!emailPattern.test(formData.email.trim())) {
+        errors.push("メールアドレスの形式が正しくありません。");
+      }
+
+      if (!formData.role) {
+        errors.push("権限区分は「一般」または「管理者」を選択してください。");
+      }
+
+      if (formData.password.length < 8) {
+        errors.push("パスワードは8文字以上で入力してください。");
+      }
+
+      if (formData.confirmPassword !== formData.password) {
+        errors.push("確認用パスワードがパスワードと一致していません。");
+      }
+
+      return errors;
+    }
+
+    function showErrors(errors) {
+      if (errors.length === 0) {
+        errorBox.style.display = "none";
+        errorBox.innerHTML = "";
+        return;
+      }
+
+      const listItems = errors.map((msg) => `<li>${escapeHtml(msg)}</li>`).join("");
+      errorBox.innerHTML = `<strong>入力内容を確認してください。</strong><ul>${listItems}</ul>`;
+      errorBox.style.display = "block";
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const formData = {
+        name: form.name.value,
+        email: form.email.value,
+        role: form.role.value,
+        password: form.password.value,
+        confirmPassword: form.confirmPassword.value
+      };
+
+      const errors = validate(formData);
+      showErrors(errors);
+
+      if (errors.length > 0) {
+        return;
+      }
+
+      // パスワードは保持せず、一覧表示に必要な項目のみ登録
+      users.push({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        role: formData.role
+      });
+
+      renderUsers();
+      form.reset();
+      showErrors([]);
+      form.name.focus();
+    });
+
+    renderUsers();
+  </script>
+</body>
+</html>
